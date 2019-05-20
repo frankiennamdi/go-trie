@@ -8,29 +8,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var words = []struct {
+	word     string
+	isPrefix bool
+	isWord   bool
+}{
+	{"hello", false, true},
+	{"hey", false, true},
+	{"john", false, true},
+	{"he", true, false},
+	{"xyz", false, false},
+}
+
 func TestCanFindWord(t *testing.T) {
 	trie := trie.NewTree()
 	trie.Insert("hello")
-	result := trie.Search("hello")
-	fmt.Printf("%+v\n", result)
-	assert.Equal(t, result.IsPrefix, false, "false expected")
-	assert.Equal(t, result.IsWord, true, "true expected")
-}
+	trie.Insert("hey")
+	trie.Insert("john")
 
-func TestCanFindPrefix(t *testing.T) {
-	trie := trie.NewTree()
-	trie.Insert("hello")
-	result := trie.Search("he")
-	fmt.Printf("%+v\n", result)
-	assert.Equal(t, result.IsPrefix, true, "true expected")
-	assert.Equal(t, result.IsWord, false, "false expected")
-}
-
-func TestCannotFindNonExistingWord(t *testing.T) {
-	trie := trie.NewTree()
-	trie.Insert("hello")
-	result := trie.Search("xyz")
-	fmt.Printf("%+v\n", result)
-	assert.Equal(t, result.IsPrefix, false, "false expected")
-	assert.Equal(t, result.IsWord, false, "false expected")
+	for _, tc := range words {
+		t.Run(tc.word, func(t *testing.T) {
+			result := trie.Search(tc.word)
+			fmt.Printf("%+v\n", result)
+			assert.Equal(t, result.IsPrefix, tc.isPrefix)
+			assert.Equal(t, result.IsWord, tc.isWord)
+		})
+	}
 }
